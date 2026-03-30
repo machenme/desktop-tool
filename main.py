@@ -65,6 +65,24 @@ class Api:
         except Exception as e:
             return f"更名失败: {str(e)}"
 
+    def remove_exe_suffix(self):
+        try:
+            count = 0
+            for f in os.listdir(self.desktop):
+                if f.lower().endswith(".lnk"):
+                    # 专门处理 .exe.lnk 变 .lnk
+                    if f.lower().endswith(".exe.lnk"):
+                        new_name = f.replace(".exe.lnk", ".lnk")
+                        old_path = os.path.join(self.desktop, f)
+                        new_path = os.path.join(self.desktop, new_name)
+
+                        if old_path != new_path and not os.path.exists(new_path):
+                            os.rename(old_path, new_path)
+                            count += 1
+            return f"已移除 {count} 个快捷方式的 .exe 结尾。"
+        except Exception as e:
+            return f"操作失败: {str(e)}"
+
 
 html = """
 <!DOCTYPE html>
@@ -88,9 +106,10 @@ html = """
 <body>
     <div class="card">
         <h3>桌面优化工具</h3>
-        <button onclick="safeRun('move_common_files')">移动公共桌面文件</button>
-        <button onclick="safeRun('clear_icon_cache')">清理图标缓存</button>
-        <button onclick="safeRun('clean_lnk_names')">一键清理快捷方式名</button>
+        <button onclick="safeRun('move_common_files')">移动公共桌面文件到当前用户桌面</button>
+        <button onclick="safeRun('clear_icon_cache')">清理图标缓存(修复白图标)</button>
+        <button onclick="safeRun('clean_lnk_names')">一键清理"快捷方式"四个字</button>
+        <button onclick="safeRun('remove_exe_suffix')">移除快捷方式.exe结尾</button>
         <div id="log">等待操作...</div>
     </div>
 
@@ -132,7 +151,7 @@ if __name__ == "__main__":
         html=html,
         js_api=api,
         width=400,
-        height=480,
+        height=500,
         resizable=False,  # 固定窗口大小
     )
     webview.start(debug=False)
