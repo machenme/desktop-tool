@@ -35,7 +35,7 @@ uv run main.py
 **打包 (生成可执行文件)**:
 - 使用 `pyinstaller` 生成单文件窗口程序：
 ```bash
-uv run pyinstaller --onefile --windowed main.py
+uv run pyinstaller main.spec
 ```
 
 - 打包完成后，可执行文件位于 `dist/` 目录中。若需要包含额外资源或图标，请参考 `pyinstaller` 文档并在命令中添加 `--add-data` / `--icon` 等参数。
